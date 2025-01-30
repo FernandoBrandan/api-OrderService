@@ -5,12 +5,11 @@ import { orderDetailService } from "../services/orderDetailService";
 
 import { Order } from "../interfaces/orderInterface";
 import { OrderDetail } from "../interfaces/orderDetailInterface";
-
+ 
 import { orderValidation } from "../utils/orderValidation";
 import { orderDetailValidation } from "../utils/orderDetailValidation";
 
-
-import { validateProducts } from '../services/productValidate';
+import { validateItems } from '../services/rabbitmMetods';
 
 
 export const getOrders = async (req: Request, res: Response, next: NextFunction) => {
@@ -45,15 +44,15 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
             userId: "123", // req.body.user, // se genera en el mid la desfrar token - pero antes modificar modelo gateway
             email: req.body.email,
             phoneNumber: req.body.phoneNumber,
+            api: req.body.api,
             paid: false,
             amount: req.body.amount,
             status: "pending",
             details: req.body.details || ""
         };
-        const order = await orderService.createOrder(newOrder);
         const newOrderDetail: OrderDetail[] = req.body.cart.map((item: OrderDetail) => {
             return {
-                "productId": item.productId,
+                "itemId": item.itemId,
                 "price": item.price,
                 "quantity": item.quantity,
                 //order: order?._id
@@ -61,8 +60,11 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
         });
         res.json({message: "FIN!!!!!!!!!!!!!!!!11"})
         console.log("Inicio Rabbit");
-        await validateProducts(newOrderDetail); // Valida antes de crear la orden 
+        await validateItems(newOrder.api, newOrderDetail); // Valida antes de crear la orden         
         console.log("Fin Rabbit");
+        
+        
+        const order = await orderService.createOrder(newOrder);
         const orderDetail = orderDetailService.createOrder(newOrderDetail);
 
         // Actualiza el pedido con los detalles creados
@@ -84,11 +86,11 @@ export const deleteOrder = async (req: Request, res: Response) => { res.send("De
 /** Fn */
 
 const validateAmount = (cart: Array<OrderDetail>, amount: number) => {
-    const calculated: number = cart.reduce((total: number, item: OrderDetail) => {
-        if (item.price < 0 || item.quantity < 0) {
-            throw new Error(`El precio o la cantidad no pueden ser negativos en el artículo ${item.productId}`);
+    const calculated: number = cart.reduce((total: number, cart: OrderDetail) => {
+        if (cart.price < 0 || cart.quantity < 0) {
+            throw new Error(`El precio o la cantidad no pueden ser negativos en el artículo ${cart.itemId}`);
         }
-        return total + item.price * item.quantity;
+        return total + cart.price * cart.quantity;
     }, 0);
 
     if (calculated !== amount) {
