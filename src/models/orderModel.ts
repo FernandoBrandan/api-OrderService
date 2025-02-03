@@ -1,69 +1,67 @@
-import { Schema, model } from "mongoose";
-import { Order } from "../interfaces/orderInterface";
+import { Schema, model } from 'mongoose'
+import { Order } from '../interfaces/orderInterface'
 
 const orderSchema = new Schema<Order>(
-    {
-        userId: {
-            type: String,
-            required: false
-        },
-        email: {
-            type: String,
-            required: true
-        },
-        phoneNumber: {
-            type: Number,
-            required: true
-        },
-        api: {
-            type: String,
-            required: true
-        },
-        paid: {
-            type: Boolean,
-            required: true
-        },
-        amount: {
-            type: Number,
-            required: true
-        },
-        status: {
-            type: String,
-            enum: ['pending', 'cancelled', 'successful'],
-            default: 'pending',
-        },
-        order_details: [{
-            type: Schema.Types.ObjectId,
-            ref: "OrderDetail",
-            required: true,
-        }], // Relación many-to-many
-        details: {
-            type: String,
-            required: true
-        },
+  {
+    userId: {
+      type: String,
+      required: false
     },
-    {
-        timestamps: true,
-        versionKey: false,
+    email: {
+      type: String,
+      required: true
+    },
+    phoneNumber: {
+      type: Number,
+      required: true
+    },
+    api: {
+      type: String,
+      required: true
+    },
+    paid: {
+      type: Boolean,
+      required: true
+    },
+    amount: {
+      type: Number,
+      required: true
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'cancelled', 'successful'],
+      default: 'pending'
+    },
+    order_details: [{
+      type: Schema.Types.ObjectId,
+      ref: 'OrderDetail',
+      required: true
+    }], // Relación many-to-many
+    details: {
+      type: String,
+      required: true
     }
+  },
+  {
+    timestamps: true,
+    versionKey: false
+  }
 )
 
-const orderModel = model("Order", orderSchema);
-export default orderModel;
-
+const orderModel = model('Order', orderSchema)
+export default orderModel
 
 // Para manejar en consutlas la relacion entre las colecciones Order y OrderDetail, se puede usar el método populate() de Mongoose.
 // // Obtener un pedido con sus detalles
 // const order = await Order.findOne({ _id: orderId }).populate('order_details');
 // console.log(order);
-// 
+//
 // // Obtener un detalle con su pedido asociado
 // const orderDetail = await OrderDetail.findOne({ _id: detailId }).populate('order');
 // console.log(orderDetail);
 
-
 /**
- * 
+ *
  * 3. Validación y control de consistencia
 Para mantener la integridad de los datos:
 
@@ -83,9 +81,8 @@ orderSchema.pre('save', async function (next) {
   next();
 });
 
-
 /**
- * 
+ *
  * Cascade delete: Si un pedido se elimina, puedes configurar que también se eliminen sus detalles.
 
 javascript
@@ -96,6 +93,4 @@ orderSchema.pre('remove', async function (next) {
   next();
 });
 
-
- */ 
-
+ */

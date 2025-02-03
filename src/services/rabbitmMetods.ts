@@ -1,41 +1,26 @@
-import { rabbtimq } from "./rabbitmqService";
-
-import { OrderDetail } from '../interfaces/orderDetailInterface';
-
-enum API {
-    "API-LIBRARY"
-}
-
+import { rabbtimq } from './rabbitmqService'
+import { OrderDetail } from '../interfaces/orderDetailInterface'
 
 export const validateItems = async (api: string, items: OrderDetail[]) => {
-    // const queue: string = api
-    const queue: string = "API-LIBRARY"
-    const response = await rabbtimq(queue, items)
-    return response
+  const queue: string = 'API-LIBRARY'
+  const resValidatedItems = JSON.parse(JSON.stringify(await rabbtimq(queue, items), null, 2))
+  if (resValidatedItems.response && resValidatedItems.response.valid === false) {
+    return { valid: false, message: resValidatedItems.response.message }
+  }
+  return { valid: true, message: '' }
 }
 
-/**
- * 
- * 
- * 
-// Función para validar productos con personalización
-export const validateProducts = async (productIds: OrderDetail[]): Promise<void> => {
-    const message = { 
-        type: 'product_validation', 
-        productIds,
-        // Otros campos específicos si es necesario
-    };
-    await sendMessage('library_validate', message);
-};
-
-// Función para obtener información del producto con personalización
-export const getProductInfo = async (productId: string): Promise<void> => {
-    const message = { 
-        type: 'product_info', 
-        productId,
-        // Otros campos específicos si es necesario
-    };
-    await sendMessage('library_product_info', message);
-};
-
-*/
+export const updateOrderDetails = async (api: string, items: OrderDetail[]) => {
+  // const queue: string = api
+  const queue: string = 'API-LIBRARY'
+  const act: string = 'DISCOUNT-STOCK'
+  const message = {
+    act,
+    items
+  }
+  const resDiscountStock = JSON.parse(JSON.stringify(await rabbtimq(queue, [message]), null, 2))
+  if (resDiscountStock.response && resDiscountStock.response.valid === false) {
+    return { valid: false, message: resDiscountStock.response.message }
+  }
+  return { valid: true, message: '' }
+}

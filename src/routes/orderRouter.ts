@@ -1,18 +1,17 @@
-import { Router } from "express";
-const router = Router();
+import { Router } from 'express'
+import setupAuth from '../middleware/authMiddleware'
+import { getOrders, getOrder, createOrder } from '../controllers/orderController'
+const router = Router()
 
-import { getOrders, getOrder, createOrder } from "../controllers/orderController";
-import setupAuth from "../middleware/authMiddleware";
+router.get('/order', getOrders)
+router.get('/order/:id', getOrder)
+router.post('/order', setupAuth, createOrder)
 
-router.get("/order", getOrders)
-router.get("/order/:id", getOrder)
-router.post("/order", setupAuth, createOrder)
-
-export default router;
+export default router
 
 /**
- * 
-{ 
+ *
+{
   "email": "fer@fer.com",
   "phoneNumber": 12345,
   "paid": false,
