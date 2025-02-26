@@ -4,7 +4,6 @@ export interface Order {
     userId: string,
     email: string,
     phoneNumber: number,
-    api: string,
     paid: boolean,
     amount: number,
     status: string, // enum: ['pending', 'cancelled', 'successful'],

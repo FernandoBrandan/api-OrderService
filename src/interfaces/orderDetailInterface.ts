@@ -1,6 +1,7 @@
 import { Types } from 'mongoose'
 
 export interface OrderDetail {
+  api: string,
   itemId: number;
   price: number;
   quantity: number;

@@ -40,7 +40,6 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
       userId: '123', // req.body.user, // se genera en el mid la desfrar token - pero antes modificar modelo gateway
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
-      api: req.body.api,
       paid: false,
       amount: req.body.amount,
       status: 'pending',
@@ -48,6 +47,7 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
     }
     const newOrderDetail: OrderDetail[] = req.body.cart.map((item: OrderDetail) => {
       return {
+        api: item.api,
         itemId: item.itemId,
         price: item.price,
         quantity: item.quantity
