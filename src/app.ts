@@ -51,7 +51,6 @@ const corsOptions = {
   credentials: true // Permite el envío de cookies o credenciales
 }
 if (process.env.NODE_ENV === 'development') {
-  console.log('cors !!!!!!!!!!!!!1')
   app.use(cors())
 } else {
   app.use(cors(corsOptions))
